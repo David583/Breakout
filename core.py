@@ -1,10 +1,12 @@
 import pygame
 import ctypes
+import platform
 from screen import *
 from logic import *
 from objects import *
 
-ctypes.windll.user32.SetProcessDPIAware()
+if platform.system() == "Windows":
+    ctypes.windll.user32.SetProcessDPIAware()
 
 class Game():
     def __init__(self):

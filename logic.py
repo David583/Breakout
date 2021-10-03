@@ -71,7 +71,7 @@ class Logic:
         for file in os.listdir(os.path.join(os.path.dirname(__file__), "levels")):
             if file.endswith(".txt"):
                 Game.GameObjects.levelList.append(file)
-                f = open(os.path.join(os.path.dirname(__file__) + "\\levels", file))
+                f = open(os.path.join(os.path.dirname(__file__), "levels", file))
                 Game.GameObjects.levelNameList.append(f.readline().strip())
                 f.close()
         

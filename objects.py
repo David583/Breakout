@@ -18,8 +18,8 @@ class Objects:
             self.eventOnClick = e
             self.textToDisplay = t
             self.textToRender = Game.GameScreen.font.render(self.textToDisplay, 1, pygame.Color(0, 0, 0))
-            self.textPositionX = self.positionX + (self.sizeX - self.textToRender.get_width()) / 2
-            self.textPositionY = self.positionY + (self.sizeY - self.textToRender.get_height()) / 2 
+            self.textPositionX = int((self.sizeX - self.textToRender.get_width()) / 2 + self.positionX)
+            self.textPositionY = int((self.sizeY - self.textToRender.get_height()) / 2 + self.positionY)
 
     class MainMenuPosition:
         def __init__(self, screenWidth, screenHeight):

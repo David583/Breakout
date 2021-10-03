@@ -3,7 +3,8 @@ import pygame
 class Screen:
     def __init__(self, Game):
         self.fontSize = 0
-        self.mainCanvas = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.font = pygame.font.Font("gamefont.ttf", self.fontSize)
+        self.mainCanvas = pygame.display.set_mode((1920, 1080), pygame.NOFRAME)
         self.alpha = 0
         self.alphaCanvas = pygame.Surface((self.mainCanvas.get_width(), self.mainCanvas.get_height()))
         self.alphaIncrement = 0
@@ -26,8 +27,7 @@ class Screen:
         Game.GameScreen.alphaIncrement = 0
         pygame.event.clear()
     def DrawText(self, text, posX, posY, Game):
-        font = pygame.font.SysFont("Trebuchet MS", 30)
-        SomeText = font.render(text, False, (0, 0, 0))
+        SomeText = self.font.render(text, False, (0, 0, 0))
         Game.GameScreen.mainCanvas.blit(SomeText, (posX, posY))
     def DrawFrame(self, Game):
         Game.GameScreen.mainCanvas.fill(Game.backGroundColor)

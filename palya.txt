@@ -1,5 +1,0 @@
-Pálya név
-Háttér szín
-Játékos szín
-Labda szín
-Pálya

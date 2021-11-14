@@ -35,6 +35,7 @@ class Screen:
         Game.GameScreen.mainCanvas.blit(SomeText, (posX, posY))
     def DrawFrame(self, Game):
         Game.GameScreen.mainCanvas.fill(Game.backGroundColor)
+        
         # Drawing buttons
 
         for i in range(len(Game.GameObjects.buttonList)):
@@ -48,8 +49,10 @@ class Screen:
             for i in range(1, Game.GameObjects.levelSizeY + 1, 1):
                 for j in range(1, Game.GameObjects.levelSizeX + 1, 1):
                     pygame.draw.rect(Game.GameScreen.mainCanvas, Game.GameScreen.tileBackgroundColors[Game.GameObjects.level[i][j]], pygame.Rect((j - 1) * Game.GameScreen.screenInfo.objectWidth, (i - 1) * Game.GameScreen.screenInfo.objectHeight, Game.GameScreen.screenInfo.objectWidth, Game.GameScreen.screenInfo.objectHeight))
+            pygame.draw.rect(Game.GameScreen.mainCanvas, (0, 0, 0), pygame.Rect(Game.GameScreen.screenInfo.screenWidth - Game.GameScreen.screenInfo.extraSpaceX, 0, Game.GameScreen.screenInfo.extraSpaceX, Game.GameScreen.screenInfo.screenHeight))
         if Game.GameLogic.gameMode == 1:
-            pass
+            pygame.draw.rect(Game.GameScreen.mainCanvas, Game.playerColor, pygame.Rect(Game.GameObjects.levelData.playerPositionX, Game.GameObjects.levelData.playerPositionY, Game.GameScreen.screenInfo.objectWidth, Game.GameScreen.screenInfo.objectHeight))
+            pygame.draw.circle(Game.GameScreen.mainCanvas, Game.ballColor, (int(Game.GameObjects.levelData.ballPositionX), int(Game.GameObjects.levelData.ballPositionY)), Game.GameObjects.levelData.ballSize)
 
         # Handle alpha
 
@@ -59,6 +62,11 @@ class Screen:
             self.mainCanvas.blit(Game.GameScreen.alphaCanvas, (0, 0))
             Game.GameScreen.alpha = Game.GameScreen.alpha + Game.GameScreen.alphaIncrement
 
+        # Using the fpsClock as eventClock
+
+        if Game.GameLogic.gameMode == 1:
+            Game.GameLogic.MoveBall(Game)
+        
         pygame.display.update()
         Game.fpsClock.tick(60)
         # print(str(int(Game.fpsClock.get_fps())))

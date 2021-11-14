@@ -11,7 +11,7 @@ class Objects:
         self.levelSizeX = 10
         self.levelSizeY = 12
         self.level = [[0 for i in range(self.levelSizeX + 2)] for j in range(self.levelSizeY + 1)]
-        self.ball
+        self.levelData = 0
 
     class Button:
         def __init__(self, bgColor, sX, sY, pX, pY, e, t, d, Game):
@@ -59,7 +59,7 @@ class Objects:
             self.saveButtonPositionY = (Game.GameObjects.levelSizeY + 5) * Game.GameScreen.screenInfo.objectHeight - 4 * Game.GameScreen.screenInfo.objectHeight
             self.exitButtonPositionX = Game.GameScreen.screenInfo.extraSpaceX / 2
             self.exitButtonPositionY = (Game.GameObjects.levelSizeY + 5) * Game.GameScreen.screenInfo.objectHeight - 2 * Game.GameScreen.screenInfo.objectHeight
-            self.colorStartFieldX = Game.GameScreen.screenInfo.screenWidth - Game.GameScreen.screenInfo.extraSpaceX / 2 - Game.GameScreen.screenInfo.objectWidth
+            self.colorStartFieldX = Game.GameScreen.screenInfo.screenWidth - int(Game.GameScreen.screenInfo.extraSpaceX / 2) - Game.GameScreen.screenInfo.objectWidth
             self.colorStartFieldY = self.saveButtonPositionY
             self.blocksStartX = int(Game.GameScreen.screenInfo.screenWidth / 2) - 2 * Game.GameScreen.screenInfo.objectWidth
     
@@ -67,9 +67,9 @@ class Objects:
         def __init__(self, Game):
             self.playerPositionX = Game.GameScreen.screenInfo.objectWidth * 4 + int(Game.GameScreen.screenInfo.objectWidth / 2)
             self.playerPositionY = Game.GameScreen.screenInfo.screenHeight - Game.GameScreen.screenInfo.objectHeight - Game.GameScreen.screenInfo.extraSpaceY
-            self.ballPositionX = self.playerPositionX
-            self.ballPositionY = self.Game.GameScreen.screenInfo.objectHeight * 10 + int(Game.GameScreen.screenInfo.objectWidth / 2)
+            self.ballSize = int(Game.GameScreen.screenInfo.objectHeight / 4)
+            self.ballPositionX = int(Game.GameScreen.screenInfo.screenWidth / 2)  
+            self.ballPositionY = Game.GameScreen.screenInfo.objectHeight * 11 + int(Game.GameScreen.screenInfo.objectWidth / 2)
             self.ballDirectionX = 0
-            self.ballDirectionY = -0.01
-            self.realBallPositionX = self.ballPositionX
-            self.realBallPositionY = self.ballPositionY
+            self.ballDirectionY = 0
+            self.avaliablePlayerSpace = Game.GameScreen.screenInfo.screenWidth - Game.GameScreen.screenInfo.objectWidth - Game.GameScreen.screenInfo.extraSpaceX

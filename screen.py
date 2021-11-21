@@ -69,4 +69,3 @@ class Screen:
         
         pygame.display.update()
         Game.fpsClock.tick(60)
-        # print(str(int(Game.fpsClock.get_fps())))

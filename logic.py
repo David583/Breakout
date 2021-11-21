@@ -3,6 +3,7 @@ import pygame
 import os
 from tkinter.filedialog import asksaveasfile
 from tkinter import colorchooser
+from tkinter import messagebox
 
 from pygame import time
 
@@ -43,7 +44,7 @@ class Logic:
         Game.GameLogic.editOrPlayArray = [Game.GameLogic.LoadGame, Game.GameLogic.LoadEditor]
         Game.GameLogic.MainLoop(Game)
     def LoadMainMenu(self, Game, Menu):
-        if Game.GameLogic.gameMode != 0:
+        if Game.firstStart == 1:
             Game.GameScreen.FadeIn(Game)
         Game.GameObjects.buttonList.clear()
         Game.backGroundColor = (51, 51, 255)
@@ -52,6 +53,7 @@ class Logic:
         Game.GameObjects.buttonList.append(Game.GameObjects.Button((18, 196, 196), Menu.menuButtonSizeX, Menu.menuButtonSizeY, Menu.menuPositionX, Menu.menuPositionY + Menu.menuButtonDistance + Menu.menuButtonSizeY, Game.GameLogic.LoadLevels, "Level editor", 1, Game))
         Game.GameObjects.buttonList.append(Game.GameObjects.Button((18, 196, 196), Menu.menuButtonSizeX, Menu.menuButtonSizeY, Menu.menuPositionX, Menu.menuPositionY +  2 * Menu.menuButtonDistance + 2 * Menu.menuButtonSizeY, Game.GameLogic.ExitGame, "Exit game", "", Game))
         Game.GameLogic.gameMode = 0
+        Game.firstStart = 1
         Game.GameScreen.FadeOut(Game)
     def MainLoop(self, Game):
         while Game.GameLogic.isRunning == True:
@@ -61,7 +63,7 @@ class Logic:
         alreadyUsed = False
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                Game.GameLogic.isRunning = False
+                Game.GameLogic.LoadMainMenu(Game, Game.GameObjects.mainMenu)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 MousePosition = pygame.mouse.get_pos()
                 for i in range(len(Game.GameObjects.buttonList)):
@@ -135,8 +137,8 @@ class Logic:
     def LoadLevel(self, Game, secondparam):
         for i in range(Game.GameObjects.levelSizeY + 1):
             for j in range(Game.GameObjects.levelSizeX + 2):
-                if (i == 0 or j == 0 or j == Game.GameObjects.levelSizeX + 1):
-                    Game.GameObjects.level[i][j] = 1
+                if (i == 0):
+                    Game.GameObjects.level[i][j] = 3
                 else:
                     Game.GameObjects.level[i][j] = 0
         if secondparam != "":
@@ -168,31 +170,67 @@ class Logic:
         Game.GameObjects.buttonList.clear()
         Game.GameObjects.levelData = Game.GameObjects.LevelStart(Game)
         Game.GameLogic.LoadLevel(Game, secondparam)
+        for y in range(1, Game.GameObjects.levelSizeY, 1):
+            for x in range(1, Game.GameObjects.levelSizeX, 1):
+                if (Game.GameObjects.level[y][x] != 0 and Game.GameObjects.level[y][x] != 3):
+                    Game.GameObjects.levelData.numberOfTiles = Game.GameObjects.levelData.numberOfTiles + 1
         Game.GameScreen.tileBackgroundColors[0] = Game.backGroundColor
         Game.GameLogic.gameMode = 1
         Game.GameScreen.FadeOut(Game)
-        pygame.time.wait(1000)
         Game.GameObjects.levelData.ballDirectionY = 4
     def MoveBall(self, Game):
         Game.GameObjects.levelData.ballPositionX = Game.GameObjects.levelData.ballPositionX + Game.GameObjects.levelData.ballDirectionX
         Game.GameObjects.levelData.ballPositionY = Game.GameObjects.levelData.ballPositionY + Game.GameObjects.levelData.ballDirectionY
-        
         # Check for player collision
-
         if (Game.GameObjects.levelData.ballPositionY + Game.GameObjects.levelData.ballSize / 2 > Game.GameObjects.levelData.playerPositionY):
-            if (Game.GameObjects.levelData.ballPositionX >= Game.GameObjects.levelData.playerPositionX and Game.GameObjects.levelData.playerPositionX + Game.GameScreen.screenInfo.objectWidth >= Game.GameObjects.levelData.ballPositionX):
+            if (Game.GameObjects.levelData.ballPositionX >= Game.GameObjects.levelData.playerPositionX - 10 and Game.GameObjects.levelData.playerPositionX + Game.GameScreen.screenInfo.objectWidth + 10 >= Game.GameObjects.levelData.ballPositionX):
                 Game.GameObjects.levelData.ballDirectionY = Game.GameObjects.levelData.ballDirectionY * -1
+                Game.GameObjects.levelData.ballCheckTileY = Game.GameObjects.levelData.ballCheckTileY + (-2 * Game.GameObjects.levelData.ballCheckTileY)
                 collisionPointSize = Game.GameObjects.levelData.ballPositionX - Game.GameObjects.levelData.playerPositionX
                 collisionPointPerc = int(collisionPointSize * 100 / Game.GameScreen.screenInfo.objectWidth)
-                addX = round(8 * collisionPointPerc / 100, 2) - 4
-                Game.GameObjects.levelData.ballDirectionX = Game.GameObjects.levelData.ballDirectionX + addX
-                print(Game.GameScreen.screenInfo.objectWidth)
-                print(collisionPointSize)
-                print(collisionPointPerc)
-                print(addX)
-
+                Game.GameObjects.levelData.ballDirectionX = round(8 * collisionPointPerc / 100, 2) - 4
+                if (Game.GameObjects.levelData.ballDirectionX < 0):
+                    Game.GameObjects.levelData.ballCheckTileX = -1
+                else:
+                    Game.GameObjects.levelData.ballCheckTileX = 1
             else:
-                Game.GameObjects.levelData.ballDirectionY = 0
-                Game.GameObjects.levelData.ballDirectionX = 0
+                Game.GameLogic.gameMode = 0
+                messagebox.showinfo(title = "Bruh!", message = "Ezt próbáld újra!")
+                Game.GameLogic.LoadMainMenu(Game, Game.GameObjects.mainMenu)
+
+        ballArrayX = int(Game.GameObjects.levelData.ballPositionX / Game.GameScreen.screenInfo.objectWidth) + 1
+        ballArrayY = int(Game.GameObjects.levelData.ballPositionY / Game.GameScreen.screenInfo.objectHeight) + 1
+        ballInTileX = Game.GameObjects.levelData.ballPositionX % Game.GameScreen.screenInfo.objectWidth
+        ballInTileY = Game.GameObjects.levelData.ballPositionY % Game.GameScreen.screenInfo.objectHeight
+        # Check up or down
+        if (ballArrayY + Game.GameObjects.levelData.ballCheckTileY < 13 and Game.GameObjects.level[ballArrayY + Game.GameObjects.levelData.ballCheckTileY][ballArrayX] != 0 and ballInTileY >= Game.GameObjects.levelData.ballTileArrayY[2 * (Game.GameObjects.levelData.ballCheckTileY + 1)] and ballInTileY <= Game.GameObjects.levelData.ballTileArrayY[2 * (Game.GameObjects.levelData.ballCheckTileY + 1) + 1]):
+            Game.GameLogic.Collision(Game, ballArrayY + Game.GameObjects.levelData.ballCheckTileY, ballArrayX)
+            Game.GameObjects.levelData.ballDirectionY = Game.GameObjects.levelData.ballDirectionY * -1
+            Game.GameObjects.levelData.ballCheckTileY = Game.GameObjects.levelData.ballCheckTileY + (-2 * Game.GameObjects.levelData.ballCheckTileY)
+        # Check left or right
+        if (ballArrayY + Game.GameObjects.levelData.ballCheckTileY < 12 and Game.GameObjects.level[ballArrayY][ballArrayX + Game.GameObjects.levelData.ballCheckTileX] != 0 and ballInTileX >= Game.GameObjects.levelData.ballTileArrayX[2 * (Game.GameObjects.levelData.ballCheckTileX + 1)] and ballInTileX <= Game.GameObjects.levelData.ballTileArrayX[2 * (Game.GameObjects.levelData.ballCheckTileX + 1) + 1]):
+            Game.GameLogic.Collision(Game, ballArrayY, ballArrayX + Game.GameObjects.levelData.ballCheckTileX)
+            Game.GameObjects.levelData.ballDirectionX = Game.GameObjects.levelData.ballDirectionX * -1
+            Game.GameObjects.levelData.ballCheckTileX = Game.GameObjects.levelData.ballCheckTileX + (-2 * Game.GameObjects.levelData.ballCheckTileX)
+        # Check sides
+        if (Game.GameObjects.levelData.ballPositionX < int(Game.GameObjects.levelData.ballSize / 2)):  
+            Game.GameObjects.levelData.ballDirectionX = Game.GameObjects.levelData.ballDirectionX * -1
+            Game.GameObjects.levelData.ballPositionX = int(Game.GameObjects.levelData.ballSize / 2)
+            Game.GameObjects.levelData.ballCheckTileX = Game.GameObjects.levelData.ballCheckTileY + (-2 * Game.GameObjects.levelData.ballCheckTileY)
+        if(Game.GameObjects.levelData.ballPositionX > Game.GameScreen.screenInfo.screenWidth - Game.GameScreen.screenInfo.extraSpaceX - int(Game.GameObjects.levelData.ballSize / 2)):
+            Game.GameObjects.levelData.ballDirectionX = Game.GameObjects.levelData.ballDirectionX * -1
+            Game.GameObjects.levelData.ballPositionX = Game.GameScreen.screenInfo.screenWidth - Game.GameScreen.screenInfo.extraSpaceX - int(Game.GameObjects.levelData.ballSize / 2)
+            Game.GameObjects.levelData.ballCheckTileX = Game.GameObjects.levelData.ballCheckTileY + (-2 * Game.GameObjects.levelData.ballCheckTileY)
+    def Collision(self, Game, Y, X):
+        if (Game.GameObjects.level[Y][X] != 3):
+            if (Game.GameObjects.level[Y][X] == 2):
+                Game.GameObjects.level[Y][X] = 1
+            else:
+                Game.GameObjects.level[Y][X] = 0
+                Game.GameObjects.levelData.numberOfTiles = Game.GameObjects.levelData.numberOfTiles - 1
+                if (Game.GameObjects.levelData.numberOfTiles == 0):
+                    Game.GameLogic.gameMode = 0
+                    messagebox.showinfo(title = "Gratula!", message = "Kivitted ezt a pályát!")
+                    Game.GameLogic.LoadMainMenu(Game, Game.GameObjects.mainMenu)
     def ExitGame(self, Game, secondparam):
         self.isRunning = False

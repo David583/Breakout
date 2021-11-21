@@ -12,6 +12,7 @@ class Game():
     def __init__(self):
         pygame.init()
         self.fpsClock = pygame.time.Clock()
+        self.firstStart = 0
         self.backgroundColor = (0, 0, 0)
         self.playerColor = (255, 255, 255)
         self.ballColor = (127, 127, 127)

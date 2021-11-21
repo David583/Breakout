@@ -72,4 +72,9 @@ class Objects:
             self.ballPositionY = Game.GameScreen.screenInfo.objectHeight * 11 + int(Game.GameScreen.screenInfo.objectWidth / 2)
             self.ballDirectionX = 0
             self.ballDirectionY = 0
+            self.ballCheckTileX = 0
+            self.ballCheckTileY = 1
+            self.ballTileArrayY = [0, int(self.ballSize / 2), 0, 0, Game.GameScreen.screenInfo.objectHeight - int(self.ballSize / 2), Game.GameScreen.screenInfo.objectHeight]
+            self.ballTileArrayX = [0, int(self.ballSize / 2), 0, 0, Game.GameScreen.screenInfo.objectWidth - int(self.ballSize / 2), Game.GameScreen.screenInfo.objectWidth]
+            self.numberOfTiles = 0
             self.avaliablePlayerSpace = Game.GameScreen.screenInfo.screenWidth - Game.GameScreen.screenInfo.objectWidth - Game.GameScreen.screenInfo.extraSpaceX

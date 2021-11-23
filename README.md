@@ -15,4 +15,4 @@ Futtatásához szükséges a: </br>
 Az utóbbi 2 a pip csomagkezelővel könnyen telepíthető </br>
 Ismert hibák: </br>
 -A játék néha beszaggat, utánnajárásom szerint a pygame-ben van valami hiba </br>
--A labda néha átmegy sarkokon (ez ha indokolt, javítom) </br>
+-Linuxon nem záródnak be a párbeszéd ablakok
